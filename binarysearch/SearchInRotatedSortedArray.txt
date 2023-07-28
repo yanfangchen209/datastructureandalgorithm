@@ -1,0 +1,106 @@
+//method 1:
+class Solution {
+    public int search(int[] nums, int target) {
+
+        //find pivot index
+        int len = nums.length;
+        int left = 0;
+        int right = len -1;
+        while(left <= right){
+            int mid = left + (right -left)/2;
+            if(nums[mid] > nums[len - 1]){
+    // The minimum element must be in the right half
+                left = mid + 1; 
+            }else{
+    // The minimum element must be in the left half, or it could be the mid element
+                right = mid - 1;
+            }
+        }
+
+        // At the end of the loop, left point to the minimum element
+
+        //binary search over elements on the pivot element's left
+        int res = binarySearch(nums, 0, left - 1, target);
+        if(res != -1){
+            return res;
+        }
+
+        // Binary search over elements on the pivot element's right
+        return binarySearch(nums, left, len - 1, target);
+    }
+    
+
+    //standard binary search template
+    private int binarySearch(int[] arr, int start, int end, int target){
+        int left = start;
+        int right = end;
+        while(left <= right){
+            int middle = left + (right - left)/2;
+            if(target == arr[middle]){
+                return middle;
+            }else if(target > arr[middle]){
+                left  = middle + 1;
+            }else{
+                right = middle - 1;
+            }
+        }
+        return -1;
+    }
+}
+
+//method 2: 
+Algorithm
+Initialize the boundaries of the searching space as left = 0 and right = n - 1.
+
+While left <= right, do the followings:
+
+Locate the middle index as mid = left + (right - left) // 2. Compare
+nums[mid] with target. If target = nums[mid], return mid. Otherwise:
+
+If nums[mid] >= nums[left], the left half is sorted.
+
+If target >= nums[left] and target < nums[mid], target might be in the left half. Continue with the left half by setting right = mid - 1.
+Otherwise, move on with the right half by setting left = mid + 1.
+Repeat step 2.
+
+If nums[mid] < nums[left], the right half is sorted.
+
+If target <= nums[left] and target > nums[mid], target might be in the right half. Continue with the right half by setting left = mid + 1.
+Otherwise, move on with the left half by setting right = mid + 1.
+Return -1 when the search is complete.
+
+*/
+class Solution {
+    public int search(int[] nums, int target) {
+        int n = nums.length;
+        int left = 0, right = n - 1;
+        
+        while (left <= right) {
+            int mid = left + (right - left) / 2;
+            
+            // Case 1: find target
+            if (nums[mid] == target) {
+                return mid;
+            }
+            
+            // Case 2: subarray on mid's left is sorted
+            else if (nums[mid] >= nums[left]) {
+                if (target >= nums[left] && target < nums[mid]) {
+                    right = mid - 1;
+                } else {
+                    left = mid + 1;
+                }
+            }
+            // Case 3: subarray on mid's right is sorted
+            else {
+                if (target <= nums[right] && target > nums[mid]) {
+                    left = mid + 1;
+                } else {
+                    right = mid - 1;
+                }
+            }
+        }
+        
+        return -1;
+    }
+}
